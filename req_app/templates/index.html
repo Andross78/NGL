@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/mdb.min.css' %}">
+    <title>All searched authors</title>
+</head>
+<body>
+    <div class="container mb-3">
+      <form id="search-form" action="{% url 'index' %}" method="POST" class="row justify-content-md-center">
+        {% csrf_token %}
+        <div class="col-4">
+          <p class="h5">{{ form.author_name.label }}</p>
+          <div class="input-group">
+            {{ form.author_name }}
+            <button type="submit" name="search" id="search-btn" class="btn btn-primary">Search</button>
+            <button type="button" name="reset" id="reset-btn" class="btn btn-secondary">Reset</button>
+          </div>
+        </div>
+        <!-- <nav class="navbar navbar-light bg-light">
+            <div class="container-fluid">
+              <form class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+              </form>
+            </div>
+          </nav> -->
+      </form>
+    </div>
+   
+    {% if message %}
+    <div class="container">
+      <p class="d-block col-4 row justify-content-md-center alert alert-danger mx-auto">{{ message }}</p>
+    </div>
+    {% endif %}
+    {% if author_per_page %}
+    <div class="container">
+      <p class="h6 mt-4">Authors</p>
+      <table class="table table-striped">
+          <tbody>
+              <tr>
+                  <th>Name</th>
+                  <th>Key</th>
+                  <th>Views</th>
+                  <th>Alternate Names</th>
+              </tr>
+              {% for author in author_per_page %}    
+              <tr>
+                  <td>{{ author.name }}</td>
+                  <td>{{ author.api_key }}</td>
+                  <td>{{ author.views }}</td>
+                  <td>{{ author.aka }}</td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+    </div>
+    {% else %}
+    <thead>Still No Author was added</thead>
+    <tbody></tbody>
+    {% endif %}
+    <br>
+    <div class="container d-block mx-auto">
+      {% if author_per_page.has_previous %}
+      <a href="?page=1">&laquo First</a>
+      <a href="?page={{ author_per_page.previous_page_number }}">Previous</a>
+      {% endif %}
+
+      Page {{ author_per_page.number }} of {{ author_per_page.paginator.num_pages}}
+
+      {% if author_per_page.has_next %}
+        <a href="?page={{ author_per_page.next_page_number }}">Next</a>
+        <a href="?page={{ author_per_page.paginator.num_pages}}">Last &raquo</a>
+      {% endif %}
+    </div>
+    <script type="text/javascript" src="{% static 'js/scripts.js' %}"></script>
+</body>
+</html>
